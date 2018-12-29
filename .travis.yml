@@ -7,4 +7,9 @@ rvm:
   - 2.4.4
   - 2.5.1
   - ruby-head
-before_install: gem install bundler
+before_install:
+  - gem install bundler
+
+script:
+  - bundle exec rubocop lib spec
+  - bundle exec rspec
