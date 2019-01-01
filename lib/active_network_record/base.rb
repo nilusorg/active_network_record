@@ -4,7 +4,9 @@ require 'rails'
 # rubocop:disable all
 module ActiveNetworkRecord
   class Base
-    attr_reader :attributes,:errors
+    include ActiveNetworkRecord::Attributes
+
+    attr_reader :attributes, :errors
     def initialize(attrs = {})
       @attributes = read_map(attrs)
       @dirty = false

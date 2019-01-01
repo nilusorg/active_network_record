@@ -1,4 +1,5 @@
 require 'active_network_record/version'
+require 'active_network_record/attributes'
 require 'active_network_record/base'
 
 module ActiveNetworkRecord
