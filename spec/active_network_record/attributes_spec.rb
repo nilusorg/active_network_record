@@ -184,7 +184,24 @@ RSpec.describe ActiveNetworkRecord::Attributes do
   end
 
   describe '.read_attribute' do
-    it 'reads its own instance variable'
+    before do
+      attributes_record.attributes = [:key]
+    end
+
+    context 'with the value already setted' do
+      let(:attributes) { { key: :value} }
+
+      it 'reads its own instance variable' do
+        expect(attributes_record_instance.read_attribute :key).to eq(:value)
+      end
+    end
+    context 'with the value non setted' do
+      let(:attributes) { {} }
+
+      it 'returns nil' do
+        expect(attributes_record_instance.read_attribute :key).to be_nil
+      end
+    end
   end
 
   describe '.write_attribute' do
@@ -218,11 +235,68 @@ RSpec.describe ActiveNetworkRecord::Attributes do
   end
 
   describe '.assign_attributes' do
-    context 'with valid attributes' do
-      it 'invokes write_attribute for every attribute'
+    before do
+      attributes_record.attributes = [:key, :key2]
     end
+
+    context 'with valid attributes' do
+      let(:attributes_to_assign) { { key: :value } }
+
+      context 'with old values' do
+        let(:attributes) { { key2: :value2 } }
+
+        it 'set dirty to true' do
+          expect { attributes_record_instance.assign_attributes(attributes_to_assign) }.to(
+            change { attributes_record_instance.dirty? }.from(false).to(true)
+          )
+        end
+
+        it 'changes attributes to the setted ones' do
+          expect { attributes_record_instance.assign_attributes(attributes_to_assign) }.to(
+            change { attributes_record_instance.attributes }.from(attributes).to(attributes_to_assign.merge(key2: :value2))
+          )
+        end
+      end
+
+      context 'without old values' do
+        let(:attributes) { { } }
+
+        it 'set dirty to true' do
+          expect { attributes_record_instance.assign_attributes(attributes_to_assign) }.to(
+            change { attributes_record_instance.dirty? }.from(false).to(true)
+          )
+        end
+
+        it 'changes attributes to the setted ones' do
+          expect { attributes_record_instance.assign_attributes(attributes_to_assign) }.to(
+            change { attributes_record_instance.attributes }.from(attributes).to(attributes_to_assign)
+          )
+        end
+      end
+
+    end
+
     context 'with invalid attributes' do
-      it 'raises a descriptive exception'
+      let(:attributes) { { } }
+      let(:attributes_to_assign) { { key3: :value } }
+
+
+      it 'keeps dirty as false' do
+        expect do
+          begin
+            attributes_record_instance.assign_attributes(attributes_to_assign)
+          rescue
+          end
+        end.not_to(
+          change { attributes_record_instance.dirty? }
+        )
+      end
+
+      it 'throws an exception' do
+        expect { attributes_record_instance.assign_attributes attributes_to_assign }.to(
+          raise_exception(ArgumentError)
+        )
+      end
     end
   end
 end

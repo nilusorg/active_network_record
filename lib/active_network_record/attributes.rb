@@ -30,16 +30,28 @@ module ActiveNetworkRecord
       @attributes[key]
     end
 
+    def assign_attributes(attributes = {})
+      attributes.each do |(key, value)|
+        write_attribute key, value
+      end
+    end
+
+    def as_json
+      attributes
+    end
+
     alias dirty? dirty
+
+    def self.included(klass)
+      klass.extend(ClassMethods)
+    end
+
+    private
 
     def filter_attributes(attributes)
       attributes.with_indifferent_access.select do |(key, _value)|
         self.class.attributes.include? key.to_sym
       end
-    end
-
-    def self.included(klass)
-      klass.extend(ClassMethods)
     end
 
     module ClassMethods

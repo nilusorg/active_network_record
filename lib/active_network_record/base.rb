@@ -17,29 +17,6 @@ module ActiveNetworkRecord
       other.id == id
     end
 
-    def read_map(attributes)
-      attributes.with_indifferent_access.select do |(key, _value)|
-        self.class.attributes.include? key.to_sym
-      end
-    end
-
-    def read_attribute(attr)
-      attributes[attr.to_sym]
-    end
-
-    def write_attribute(attr, value)
-      dirty!
-      attributes[attr.to_sym] = value
-    end
-
-    def dirty?
-      @dirty
-    end
-
-    def dirty!
-      @dirty = true
-    end
-
     def inspect
       "<#{self.class.name} \n\t#{attributes.map { |(k, v)| "#{k}: #{v.inspect}" }.join(",\n\t")}>"
     end
@@ -104,10 +81,6 @@ module ActiveNetworkRecord
 
     def reset_cache!
       Rails.cache.delete_matched "#{self.class.name}::Relation*"
-    end
-
-    def as_json
-      attributes
     end
 
     def persisted?
