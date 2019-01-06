@@ -87,6 +87,9 @@ RSpec.describe ActiveNetworkRecord::Attributes do
         end
       end
     end
+    context 'with setted params' do
+      it 'appends the old params to the new ones'
+    end
   end
 
   describe '.dirty' do

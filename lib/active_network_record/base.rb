@@ -70,10 +70,6 @@ module ActiveNetworkRecord
       self
     end
 
-    def assign_attributes(args = {})
-      args.each { |(k, v)| send("#{k}=", v) }
-    end
-
     def save
       return update if persisted?
       create
