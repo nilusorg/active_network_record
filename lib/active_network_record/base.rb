@@ -191,7 +191,7 @@ module ActiveNetworkRecord
         items = Rails.cache.fetch("#{self.class.name}_#{serialized_where}_collection", expires_in: cache_expiration) do
           root_key ? raw_collection_results[root_key] : raw_collection_results
         end
-        items = items.nils? ? [] : items
+        items = items.nil? ? [] : items
         @collection_results = items.map { |i| self.class.parent.new i }
       end
 
